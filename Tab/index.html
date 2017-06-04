@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>选项卡</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Microsoft Yahei";
+      font-size: 14px;
+      color: #333;
+    }
+
+    a,
+    a:hover {
+      text-decoration: none;
+      color: #333;
+    }
+
+    ul,
+    li {
+      list-style: none;
+    }
+
+    .tab {
+      width: 400px;
+      margin: 30px auto;
+    }
+
+    .tab-title {
+      height: 30px;
+      font-size: 0;
+      background-color: #f5f5f5;
+    }
+
+    .tab-title .item {
+      display: inline-block;
+      width: 80px;
+      height: 30px;
+      line-height: 30px;
+      text-align: center;
+      color: #333;
+      font-size: 16px;
+    }
+
+    .tab-title .item-cur {
+      color: #fff;
+      background-color: #80b600;
+    }
+
+    .tab-cont {
+      position: relative;
+      background-color: #80b600;
+      width: 400px;
+      height: 200px;
+      overflow: hidden;
+    }
+
+    .tab-cont__wrap {
+      position: absolute;
+    }
+
+    .tab-cont .item {
+      width: 400px;
+      height: 200px;
+      line-height: 200px;
+      text-align: center;
+      color: #fff;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <div class="tab" js-tab="1">
+    <div class="tab-title">
+      <a href="javascript:;" class="item item-cur">Tab1</a>
+      <a href="javascript:;" class="item">Tab2</a>
+      <a href="javascript:;" class="item">Tab3</a>
+    </div>
+    <div class="tab-cont">
+      <ul class="tab-cont__wrap">
+        <li class="item">Cont1</li>
+        <li class="item">Cont2</li>
+        <li class="item">Cont3</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tab" js-tab="2">
+    <div class="tab-title">
+      <a href="javascript:;" class="item item-cur">Tab1</a>
+      <a href="javascript:;" class="item">Tab2</a>
+      <a href="javascript:;" class="item">Tab3</a>
+      <a href="javascript:;" class="item">Tab4</a>
+      <a href="javascript:;" class="item">Tab5</a>
+    </div>
+    <div class="tab-cont">
+      <ul class="tab-cont__wrap">
+        <li class="item">Cont1</li>
+        <li class="item">Cont2</li>
+        <li class="item">Cont3</li>
+        <li class="item">Cont4</li>
+        <li class="item">Cont5</li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="js/jquery-1.8.3.min.js"></script>
+  <script src="js/tab.js"></script>
+  <script>
+    $(function () {
+
+      /**
+      =========== 参数说明 ============
+      curDisplay: 当前显示哪张
+      mouse: 鼠标事件 (click/over)
+      changeMethod: 切换方式 (default/vertical/horizontal/opacity)
+      autoPlay: 自动播放 (true/false)
+       */
+
+      // 多个元素同一个变化方式
+      /*$('.tab').each(function () {
+      $(this).tab({
+        curDisplay: 5,
+        mouse: 'over',
+        changeMethod: 'vertical'
+      });
+      });*/
+
+      // 多个元素不同变化方式（需要在HTML中加入js-tab）
+      $('[js-tab=1]').tab();
+
+      $('[js-tab=2]').tab({
+        curDisplay: 2,
+        changeMethod: 'horizontal',
+        autoPlay: 'true'
+      });
+
+    });
+
+  </script>
+  </div>
+</body>
+
+</html>

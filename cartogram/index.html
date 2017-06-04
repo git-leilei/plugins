@@ -1,0 +1,200 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    
+    <canvas width="800" height="500" style="border: 1px solid #000;" id="cas"></canvas>
+
+    <script>
+    
+        function StatisticalChart(elem) {
+            this.cas = elem;
+            this.ctx = elem.getContext("2d");
+            this.x = 0;
+            this.y = 0;
+        }
+
+        StatisticalChart.prototype = {
+            // 初始化画笔坐标
+            move: function (x, y, width, color) {
+                var ctx = this.ctx;
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineWidth = width;
+                ctx.strokeStyle = color;
+                ctx.fillStyle = color;
+            },
+            // 点
+            dot: function (x, y, r, color) {
+                var ctx = this.ctx;
+                ctx.beginPath();
+                ctx.fillStyle = color;
+                ctx.arc(x, y, r, 0, 2*Math.PI);
+                ctx.fill();
+            },
+            // 坐标轴
+            Axes: function (x, y, length, color, options) {
+                this.x = x;
+                this.y = y;
+                var ctx = this.ctx;
+                this.move(x, y, 1, color);
+                ctx.lineTo(x + length[0], y);
+                ctx.lineTo(x + length[0] - 10, y - 5);
+                ctx.lineTo(x + length[0] - 5, y);
+                ctx.lineTo(x + length[0] - 10, y + 5);
+                ctx.lineTo(x + length[0], y);
+                ctx.stroke();
+                ctx.fill();
+
+                this.move(x, y, 1, color);
+                ctx.lineTo(x, y - length[1]);
+                ctx.lineTo(x - 5, y - length[1] + 10);
+                ctx.lineTo(x, y - length[1] + 5);
+                ctx.lineTo(x + 5, y - length[1] + 10);
+                ctx.lineTo(x, y - length[1]);
+                ctx.stroke();
+                ctx.fill();
+                if(options) {
+                    this.move(x, y, 1, color);
+                    ctx.lineTo(x - length[2], y);
+                    ctx.lineTo(x - length[2] + 10, y - 5);
+                    ctx.lineTo(x - length[2] + 5, y);
+                    ctx.lineTo(x - length[2] + 10, y + 5);
+                    ctx.lineTo(x - length[2], y);
+                    ctx.stroke();
+                    ctx.fill();
+
+                    this.move(x, y, 1, color);
+                    ctx.lineTo(x, y + length[3]);
+                    ctx.lineTo(x - 5, y + length[3] - 10);
+                    ctx.lineTo(x, y + length[3] - 5);
+                    ctx.lineTo(x + 5, y + length[3] - 10);
+                    ctx.lineTo(x, y + length[3]);
+                    ctx.stroke();
+                    ctx.fill();
+                }
+            },
+            // 折线图
+            line: function (data) {
+                var ctx = this.ctx;
+                var x = this.x;
+                var y = this.y;
+                for(var i = 0; i < data.length; i++) {
+                    this.dot(this.x + data[i].x, this.y - data[i].y, data[i].r, data[i].color);
+                    this.move(x, y, data[i].r, data[i].color);
+                    ctx.lineTo(this.x + data[i].x, this.y - data[i].y);
+                    ctx.stroke();
+                    x = this.x + data[i].x;
+                    y = this.y - data[i].y
+                }
+            },
+            // 条状图
+            bar: function (data) {
+                var ctx = this.ctx;
+                var w = this.cas.width;
+                var h = this.cas.height;
+                var sum = 0;
+                data.forEach(function(item) {
+                    sum += item.value;
+                });
+                this.Axes(20, h - 40, [w - 30, h - 50, 0, 0], "black");
+                var step = (w - 40) / (data.length + 1);
+                var x = step, y;
+                for(var i = 0; i < data.length; i++) {
+                    y = this.y - (h - 40) / sum * data[i].value;
+                    ctx.beginPath();
+                    ctx.fillStyle = data[i].color;
+                    ctx.strokeStyle = data[i].color;
+                    ctx.fillRect(x, y, step/2, (h - 40) / sum * data[i].value);
+                    ctx.font = data[i].size + "px 微软雅黑";
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+                    ctx.fillText(data[i].title, x + step/4, this.y + 20);
+                    x += step;
+                }
+            },
+            // 饼状图
+            pie: function (data) {
+                var sum = 0;
+                var ctx = this.ctx;
+                var w = this.cas.width;
+                var h = this.cas.height;
+                data.forEach(function(item) {
+                    sum += item.value;
+                });
+                var step = 0;
+                for(var i = 0; i < data.length; i++) {
+                    var radian = 2 * Math.PI * data[i].value / sum;
+                    var r = w < h ? w / 3 : h / 3;
+                    this.move(w/2, h/2, 1, data[i].color);
+                    ctx.arc(w/2, h/2, r, step, radian + step, false);
+                    ctx.closePath();
+                    ctx.fill();
+                    
+                    var x = w / 2 + (r + 30) * Math.cos(step + radian / 2);
+                    var y = h / 2 + (r + 30) * Math.sin(step + radian / 2);
+                    ctx.lineTo(x, y);
+                    var length = ctx.measureText(data[i].title).width + 10;
+                    if (x < w / 2) {
+                        ctx.textAlign = "right";
+                        ctx.font = data[i].size + "px 微软雅黑";
+                        ctx.fillText(data[i].title, x - 10, y - 5);
+                        ctx.lineTo(x - length, y);
+                    } else {
+                        ctx.textAlign = "left";
+                        ctx.font = data[i].size + "px 微软雅黑";
+                        ctx.fillText(data[i].title, x + 10, y - 5);
+                        ctx.lineTo(x + length, y);
+                    }
+                    ctx.stroke();
+                    step = radian + step;
+                }
+            },
+        };
+
+        // 数据
+        var data = [
+            {title: "IE" ,value: 50, color: "red", size: "18"},
+            {title: "Chrome",value: 20, color: "blue", size: "18"},
+            {title: "FireFox",value: 15, color: "green", size: "18"},
+            {title: "Safari",value: 10, color: "yellow", size: "18"},
+            {title: "Opera",value: 5, color: "black", size: "18"}
+        ]
+
+        // 获取画布
+        var cas = document.getElementById("cas");
+
+        // 实例化
+        var sc = new StatisticalChart(cas);
+        // 画点
+        sc.dot(100, 100, 10, "red");
+        // 坐标轴
+        sc.Axes(400, 250, [200,200,200,200], "blue", true);
+        // 坐标轴
+        sc.Axes(10, 490, [700,480,0,0], "#000");
+        // 折线
+        sc.line([
+            {x: 100, y: 100, r: 5, color: "blue"},
+            {x: 200, y: 50, r: 5, color: "red"},
+            {x: 300, y: 220, r: 5, color: "yellow"},
+            {x: 400, y: 170, r: 5, color: "green"},
+            {x: 480, y: 220, r: 5, color: "#000"}
+        ]);
+        // 条状统计图
+        sc.bar(data);
+        // 饼状统计图
+        sc.pie(data);
+    </script>
+</body>
+</html>

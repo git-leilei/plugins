@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>右键菜单</title>
+    <style>
+        #box {
+            width: 500px;
+            height: 400px;
+            border: 1px solid #000;
+        }
+    </style>
+    <script src="js/FileMenuTools.js"></script>
+    <script>
+        onload = function () {
+
+            // 订制自定义右键菜单项样式
+            var menuItemStyle = {
+                // color: 'aqua',
+                // backgroundColor: 'greenyellow',
+                // borderRadius: '10px',
+            };
+
+            // 订制自定义右键菜单项内容和功能
+            var menuItem = [
+                {
+                    menuItemName: '新建文件',
+                    menuItemStyle: menuItemStyle,
+                    menuItemClick: function () { console.log(this.innerHTML); }
+                },
+                {
+                    menuItemName: '新建文件夹',
+                    menuItemStyle: menuItemStyle,
+                    menuItemClick: function () { console.log(this.innerHTML); }
+                },
+                {
+                    menuItemName: '复制',
+                    menuItemStyle: menuItemStyle,
+                    menuItemClick: function () { console.log(this.innerHTML); }
+                },
+                {
+                    menuItemName: '剪贴',
+                    menuItemStyle: menuItemStyle,
+                    menuItemClick: function () { console.log(this.innerHTML); }
+                },
+                {
+                    menuItemName: '粘贴',
+                    menuItemStyle: menuItemStyle,
+                    menuItemClick: function () { console.log(this.innerHTML); }
+                },
+                {
+                    menuItemName: '重命名',
+                    menuItemStyle: menuItemStyle,
+                    menuItemClick: function () { console.log(this.innerHTML); }
+                },
+                {
+                    menuItemName: '删除',
+                    menuItemStyle: menuItemStyle,
+                    menuItemClick: function () { console.log(this.innerHTML); }
+                }
+            ];
+
+            // 订制自定义右键菜单样式
+            var menuStyle = {
+                // boxShadow: '0 0 5px red',
+                // backgroundColor: 'beige'
+            }
+
+            // 实例化菜单对象
+            var menu = new FileMenuTools('box', menuItem, menuStyle);
+            menu.init();
+        };
+    </script>
+</head>
+
+<body>
+
+    <div id="box"></div>
+
+</body>
+
+</html>
